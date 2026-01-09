@@ -1,0 +1,5 @@
+docker run -d --gpus all --restart always \
+   --name dcgm-exporter \
+   -p 9400:9400 \
+   --cap-add SYS_ADMIN \
+   nvcr.io/nvidia/k8s/dcgm-exporter:3.3.5-3.4.0-ubuntu22.04
