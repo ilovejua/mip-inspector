@@ -1,0 +1,81 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  - job_name: 'LINUX'
+    relabel_configs:
+      - source_labels: ["job"]
+        target_label: "task"
+      - source_labels: ["instanceName"]
+        target_label: "job"
+    static_configs:
+      - targets: ["161.122.37.21:9100"]
+        labels:
+          instanceName: "App Server"
+      - targets: ["161.122.37.22:9100"]
+        labels:
+          instanceName: "DB Server"
+
+  - job_name: 'VLLM'
+    metrics_path: /metrics
+    relabel_configs:
+      - source_labels: ["job"]
+        target_label: "task"
+      - source_labels: ["instanceName"]
+        target_label: "job"
+    static_configs:
+      - targets: ["161.122.37.19:8082"]
+        labels:
+          instanceName: "vllm_ellm_0425"
+      - targets: ["161.122.37.19:8084"]
+        labels:
+          instanceName: "vllm_gpt-oss-120b"
+      - targets: ["161.122.37.19:8085"]
+        labels:
+          instanceName: "vllm_gpt-oss-20b"
+      - targets: ["161.122.37.20:6006"]
+        labels:
+          instanceName: "vllm_rerank"
+      - targets: ["161.122.37.20:6007"]
+        labels:
+          instanceName: "vllm_embedding"
+      - targets: ["161.122.37.20:6009"]
+        labels:
+          instanceName: "vllm_prompt-guard"
+
+  - job_name: 'GPU'
+    relabel_configs:
+      - source_labels: ["job"]
+        target_label: "task"
+      - source_labels: ["instanceName"]
+        target_label: "job"
+    static_configs:
+      - targets: ["161.122.37.19:9400"]
+        labels:
+          instanceName: "GPU1(161.122.37.19 : H100)"
+      - targets: ["161.122.37.20:9400"]
+        labels:
+          instanceName: "GPU2(161.122.37.20 : L40s)"
+
+  - job_name: 'POSTGRES'
+    relabel_configs:
+      - source_labels: ["job"]
+        target_label: "task"
+      - source_labels: ["instanceName"]
+        target_label: "job"
+    static_configs:
+      - targets: ["161.122.37.22:9187"]
+        labels:
+          instanceName: "POSTGRES"
+
